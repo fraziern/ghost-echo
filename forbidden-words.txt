@@ -1,0 +1,330 @@
+# Forbidden words. One entry per line; blank lines and lines starting with # are ignored.
+# Matching is case-insensitive and whole-word only ("ass" does not match "class").
+# A trailing * matches any ending: "fuck*" covers fucking, fucked, fucker, ...
+# A line with several words is a phrase: "son of a bitch".
+# Each match is shown on the page as a pixelated block instead of text. The word never leaves the server.
+# Edits are picked up the next time someone starts listening (no restart needed).
+
+anal
+anilingus
+anus
+apeshit
+arsehole
+ass
+asshole
+assmunch
+ballsack
+bangbros
+bangbus
+bareback
+barely legal
+barenaked
+bastard
+bastardo
+bastinado
+bbw
+bdsm
+beaner
+beaners
+beastiality
+bestiality
+big black
+big breasts
+big knockers
+big tits
+bimbos
+birdlock
+bitch
+bitches
+black cock
+blowjob
+blow job
+blow your load
+bollocks
+bondage
+boner
+boob
+boobs
+booty call
+bukkake
+bulldyke
+bullet vibe
+bullshit
+bung hole
+bunghole
+busty
+butt
+buttcheeks
+butthole
+camel toe
+camgirl
+camslut
+camwhore
+carpet muncher
+carpetmuncher
+chocolate rosebuds
+cialis
+circlejerk
+cleveland steamer
+clit
+clitoris
+clover clamps
+clusterfuck
+cock
+cocks
+coprolagnia
+coprophilia
+cornhole
+coon
+coons
+creampie
+cum
+cumming
+cumshot
+cumshots
+cunnilingus
+cunt
+darkie
+date rape
+daterape
+deep throat
+deepthroat
+dendrophilia
+dick
+dildo
+dingleberry
+dingleberries
+dirty pillows
+dirty sanchez
+doggie style
+doggiestyle
+doggy style
+doggystyle
+dog style
+dolcett
+domination
+dominatrix
+dommes
+donkey punch
+double dong
+double penetration
+dp action
+dry hump
+dvda
+eat my ass
+ecchi
+ejaculation
+erotic
+erotism
+escort
+eunuch
+fag
+faggot
+fecal
+felch
+fellatio
+feltch
+female squirting
+femdom
+figging
+fingerbang
+fingering
+fisting
+foot fetish
+footjob
+frotting
+fuck
+fuck buttons
+fucker
+fuckin
+fucking
+fucktards
+fudge packer
+fudgepacker
+futanari
+gangbang
+gang bang
+genitals
+giant cock
+girl on
+girl on top
+girls gone wild
+goatcx
+goatse
+god damn
+gokkun
+golden shower
+goodpoop
+goo girl
+goregasm
+grope
+group sex
+g-spot
+guro
+hand job
+handjob
+hard core
+hardcore
+hentai
+homoerotic
+honkey
+hooker
+horny
+huge fat
+humping
+incest
+intercourse
+jack off
+jail bait
+jailbait
+jelly donut
+jerk off
+jigaboo
+jiggaboo
+jiggerboo
+jizz
+juggs
+kike
+kinbaku
+kinkster
+kinky
+knobbing
+leather restraint
+leather straight jacket
+lemon party
+livesex
+lolita
+lovemaking
+make me come
+male squirting
+masturbate
+masturbating
+masturbation
+menage a trois
+missionary position
+mong
+motherfucker
+mound of venus
+mr hands
+muff diver
+muffdiving
+nambla
+nawashi
+negro
+nigga
+nigger
+nig nog
+nimphomania
+nutten
+nympho
+nymphomania
+octopussy
+omorashi
+orgasm
+orgy
+paedophile
+paki
+panties
+panty
+pedobear
+pedophile
+pegging
+penis
+phone sex
+piece of shit
+pikey
+pissing
+piss pig
+pisspig
+playboy
+pleasure chest
+pole smoker
+ponyplay
+poof
+poon
+poontang
+punany
+poop chute
+poopchute
+porn
+porno
+pornography
+prince albert piercing
+pthc
+pubes
+pussy
+queaf
+queef
+quim
+raghead
+raging boner
+rape
+raping
+rapist
+rectum
+reverse cowgirl
+rimjob
+rimming
+rosy palm
+rosy palm and her 5 sisters
+rusty trombone
+sadism
+santorum
+scat
+schlong
+scissoring
+semen
+sex
+sexcam
+sexo
+sexy
+sexual
+sexually
+sexuality
+shaved beaver
+shaved pussy
+shemale
+shibari
+shit
+shitblimp
+shitty
+shota
+shrimping
+skeet
+slanteye
+slut
+s&m
+smut
+snatch
+snowballing
+sodomize
+sodomy
+spastic
+spic
+splooge
+splooge moose
+spooge
+spread legs
+spunk
+strap on
+strapon
+strappado
+strip club
+style doggy
+suck
+sucks
+suicide girls
+sultry women
+swastika
+swinger
+tea bagging
+threesome
+tit
+tits
+titties
+titty
+towelhead
+tranny
+twat
+wank
+wetback

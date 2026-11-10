@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ephemeral Text Prototype</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="stage" aria-hidden="true"></canvas>
+
+  <p id="hint">Move the mouse to the right edge for settings &middot; <kbd>M</kbd> menu &middot; <kbd>Space</kbd> pause</p>
+
+  <aside id="menu" aria-label="Display settings" inert>
+    <h2>Display</h2>
+
+    <div class="row">
+      <span class="lbl">Theme</span>
+      <div class="seg" role="group" aria-label="Theme">
+        <button type="button" data-theme="dark">Dark</button>
+        <button type="button" data-theme="light">Light</button>
+      </div>
+    </div>
+    <label class="row"><span class="lbl">Text color</span><input type="color" data-key="fg"></label>
+    <label class="row"><span class="lbl">Background</span><input type="color" data-key="bg"></label>
+    <label class="row"><span class="lbl">Text size</span><input type="range" data-key="fontPx" min="32" max="200" step="2" data-unit="px"><output></output></label>
+    <div class="row">
+      <span class="lbl">Align</span>
+      <div class="seg" role="group" aria-label="Alignment">
+        <button type="button" data-align="left">Left</button>
+        <button type="button" data-align="center">Center</button>
+      </div>
+    </div>
+
+    <h3>Motion</h3>
+    <label class="row"><span class="lbl">Scroll speed</span><input type="range" data-key="speed" min="8" max="120" step="1" data-unit="px/s"><output></output></label>
+    <label class="row"><span class="lbl">Pixelate from</span><input type="range" data-key="pixelStart" min="0.2" max="0.9" step="0.05" data-unit="%top"><output></output></label>
+    <label class="row"><span class="lbl">Max pixel size</span><input type="range" data-key="blockMax" min="4" max="40" step="1" data-unit="px"><output></output></label>
+    <label class="row"><span class="lbl">Dust zone</span><input type="range" data-key="dissolveZone" min="0.04" max="0.35" step="0.01" data-unit="%top"><output></output></label>
+
+    <h3>Dust</h3>
+    <label class="row"><span class="lbl">Wind</span><input type="range" data-key="wind" min="-150" max="150" step="5" data-unit="px/s"><output></output></label>
+    <label class="row"><span class="lbl">Lift</span><input type="range" data-key="lift" min="0" max="150" step="5" data-unit="px/s"><output></output></label>
+    <label class="row"><span class="lbl">Lifetime</span><input type="range" data-key="life" min="0.5" max="6" step="0.1" data-unit="s"><output></output></label>
+    <label class="row"><span class="lbl">Break-up time</span><input type="range" data-key="span" min="0.2" max="3" step="0.1" data-unit="s"><output></output></label>
+
+    <h3>Simulated feed</h3>
+    <label class="row"><span class="lbl">Words / sec</span><input type="range" data-key="wps" min="0.5" max="8" step="0.1" data-unit="wps"><output></output></label>
+    <div class="buttons">
+      <button type="button" id="btn-pause">Pause</button>
+      <button type="button" id="btn-clear">Clear text</button>
+      <button type="button" id="btn-reset">Reset all</button>
+    </div>
+  </aside>
+
+  <script src="feed.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
