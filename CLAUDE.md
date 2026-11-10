@@ -1,4 +1,4 @@
-# Whisper Echo — project rules
+# Ghost Echo — project rules
 
 Local live speech-to-text: an ASP.NET Core server runs whisper.cpp (via Whisper.net);
 a browser page captures the microphone, streams audio over a WebSocket, and displays

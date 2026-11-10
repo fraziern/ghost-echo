@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Test client for the Whisper Echo backend: streams a WAV file to /ws like the browser would
+  Test client for the Ghost Echo backend: streams a WAV file to /ws like the browser would
   and prints the partial/final transcript messages it gets back.
 
 .DESCRIPTION

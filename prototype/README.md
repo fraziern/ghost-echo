@@ -1,6 +1,6 @@
 # Ephemeral text prototype
 
-Standalone UX experiment for the Whisper Echo display. It has no backend: the text is a simulated
+Standalone UX experiment for the Ghost Echo display. It has no backend: the text is a simulated
 feed of made-up sentences. Text is never saved. Display settings (colors, size, motion, dust, feed speed) are
 remembered in the browser's `localStorage` per `CLAUDE.md`; **Reset all** forgets them. If storage is blocked, the
 prototype still works and just doesn't remember. `&light=1` ignores saved settings.

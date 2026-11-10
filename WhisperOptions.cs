@@ -1,4 +1,4 @@
-namespace WhisperEcho;
+namespace GhostEcho;
 
 /// <summary>Bound from the "Whisper" section of appsettings.json (or env vars / CLI args).</summary>
 public sealed class WhisperOptions

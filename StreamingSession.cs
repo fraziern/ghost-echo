@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using Whisper.net;
 
-namespace WhisperEcho;
+namespace GhostEcho;
 
 public sealed record TranscriptEvent(string Type, string Text, double T);
 

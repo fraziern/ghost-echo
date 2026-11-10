@@ -1,5 +1,5 @@
 /*
- * Whisper Echo display: ephemeral text rendering + display settings menu.
+ * Ghost Echo display: ephemeral text rendering + display settings menu.
  * (client.js owns the microphone / WebSocket and drives this through window.Display.)
  *
  *  - Words arrive at the bottom and every line scrolls up at a slow, constant speed.
@@ -545,7 +545,7 @@
   }
 
   // Display settings only (never text). Every storage access is guarded: it may be blocked or empty.
-  const STORE_KEY = 'whisper-echo.prototype.settings';
+  const STORE_KEY = 'ghost-echo.prototype.settings';
   function saveSettings() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify({ cfg, themeName })); } catch (e) { /* storage unavailable */ }
   }

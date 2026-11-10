@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace WhisperEcho;
+namespace GhostEcho;
 
 /// <summary>
 /// Replaces forbidden words in transcript text with <see cref="MaskChar"/> (one per letter). The browser draws every

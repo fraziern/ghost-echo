@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Whisper.net;
 
-namespace WhisperEcho;
+namespace GhostEcho;
 
 /// <summary>Whitelist of selectable models (also guards against path traversal in model names).</summary>
 public static class ModelCatalog

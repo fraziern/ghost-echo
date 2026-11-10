@@ -347,7 +347,7 @@
   }
 
   // Display settings only (never text). Every storage access is guarded: it may be blocked or empty.
-  const STORE_KEY = 'whisper-echo.prototype.settings';
+  const STORE_KEY = 'ghost-echo.prototype.settings';
   function saveSettings() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify({ cfg, themeName })); } catch (e) { /* storage unavailable */ }
   }

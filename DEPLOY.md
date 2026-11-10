@@ -1,6 +1,6 @@
-# Deploying Whisper Echo
+# Deploying Ghost Echo
 
-Whisper Echo is a local app: deploy it to the machine whose microphone/CPU/GPU you want to use.
+Ghost Echo is a local app: deploy it to the machine whose microphone/CPU/GPU you want to use.
 The browser UI in `wwwroot/` is static and is included in the publish output automatically.
 The page's intro phrase is `Ui:IntroPhrase` (env var `Ui__IntroPhrase`); browsers allow the microphone on
 `localhost` or HTTPS only (see "Network exposure" below if you expose it).
@@ -13,7 +13,7 @@ The page's intro phrase is `Ui:IntroPhrase` (env var `Ui__IntroPhrase`); browser
 ```powershell
 dotnet publish -c Release -r win-x64 --self-contained true -o publish
 ```
-Copy the `publish\` folder anywhere and run `publish\WhisperEcho.exe`. It listens on
+Copy the `publish\` folder anywhere and run `publish\GhostEcho.exe`. It listens on
 `http://localhost:5080`, only while it is running (no service is installed).
 
 ## Models
@@ -30,7 +30,7 @@ to turn the filter off. Format and behavior: see README.
 
 ## GPU acceleration (optional)
 The default `Whisper.net.Runtime` is CPU-only. For faster transcription, add one runtime package
-to `WhisperEcho.csproj` and republish; Whisper.net picks the best available at startup:
+to `GhostEcho.csproj` and republish; Whisper.net picks the best available at startup:
 - NVIDIA: `dotnet add package Whisper.net.Runtime.Cuda` (needs a recent NVIDIA driver and CUDA 12 runtime)
 - Any GPU: `dotnet add package Whisper.net.Runtime.Vulkan`
 
@@ -39,7 +39,7 @@ All settings are in `appsettings.json` next to the exe and can be overridden by 
 variables (`Whisper__RetentionSeconds=15`) or CLI arguments. See README for the full table.
 
 ## Running at login (optional)
-No built-in service. To start on login, create a shortcut to `WhisperEcho.exe` in
+No built-in service. To start on login, create a shortcut to `GhostEcho.exe` in
 `shell:startup`. Note it only serves the page on this machine's localhost.
 
 ## Network exposure

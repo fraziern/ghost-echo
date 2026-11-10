@@ -1,4 +1,4 @@
-# Whisper Echo
+# Ghost Echo
 
 Local, private, live speech-to-text. An ASP.NET Core server (.NET 10) runs
 [whisper.cpp](https://github.com/ggerganov/whisper.cpp) through

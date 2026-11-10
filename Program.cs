@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using WhisperEcho;
+using GhostEcho;
 
 var builder = WebApplication.CreateBuilder(args);
 
