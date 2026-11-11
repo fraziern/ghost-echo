@@ -21,7 +21,21 @@ Copy the `publish\` folder anywhere and run `publish\GhostEcho.exe`. It listens 
   to an absolute path). Pre-copying models means the app never needs network access.
 - Otherwise download from the running app: `POST /api/models/select` with `{"name":"base.en","download":true}`
   (see README). Source: `https://huggingface.co/ggerganov/whisper.cpp`.
-- Set the startup model with `Whisper__Model` (env var) or `--Whisper:Model=small`.
+- Set the startup model with `Whisper:Model` in `appsettings.json`, the `Whisper__Model` env var, or
+  `--Whisper:Model=small` (later overrides earlier). It loads at startup only if its file is already
+  in `models\`; otherwise select it in the UI to download it.
+
+### Model names
+`Whisper:Model` takes a short name, not a filename: drop the `ggml-` prefix and `.bin` extension
+(`small.en` loads `models\ggml-small.en.bin`). Names are case-sensitive and must be one of the
+following (the list is `ModelCatalog.Names` in `ModelManager.cs`); custom or renamed files are
+not recognized unless added there.
+
+| Group | Names |
+|---|---|
+| Multilingual | `tiny`, `base`, `small`, `medium`, `large-v3`, `large-v3-turbo` |
+| English-only | `tiny.en`, `base.en`, `small.en`, `medium.en` |
+| Quantized | `tiny-q5_1`, `base-q5_1`, `small-q5_1`, `medium-q5_0`, `large-v3-q5_0`, `large-v3-turbo-q5_0` |
 
 ## Forbidden-word list
 `forbidden-words.txt` is copied next to the exe by `dotnet publish`. Edit it in place (picked up when a new

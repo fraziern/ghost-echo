@@ -47,7 +47,7 @@ or CLI args (`dotnet run -- --Whisper:Model=small`).
 
 | Setting | Default | Meaning |
 |---|---|---|
-| `Model` | `base.en` | Model loaded at startup *if already downloaded*. See `GET /api/models` for choices. |
+| `Model` | `base` | Model loaded at startup *if already downloaded*. See `GET /api/models` for choices. |
 | `ModelsDir` | `models` | Where `ggml-*.bin` files live (gitignored). |
 | `Language` | `en` | Language code, or `auto` (use a non-`.en` model). |
 | `Threads` | `4` | CPU threads for whisper.cpp. |
