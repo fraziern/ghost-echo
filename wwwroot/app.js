@@ -24,7 +24,6 @@
     fg: THEMES.dark.fg,
     bg: THEMES.dark.bg,
     fontPx: 84,          // css px
-    align: 'left',       // 'left' | 'center'
     speed: 28,           // css px/s, base scroll speed
     pixelStart: 0.5,     // fraction of window height from top where pixelation begins
     blockMax: 14,        // css px, largest pixel block (reached at the dust zone)
@@ -44,7 +43,10 @@
   const SCROLL_DECEL = 150; // css px/s^2
   const GAP_SECONDS = 2;    // silence longer than this leaves a gap before the next line
   const GRAIN = 2;       // each pixel block splits into GRAIN x GRAIN grains when released
-  const CATCH_UP = 1.5;  // 1/s: extra scroll when text arrives faster than the base speed
+  const ADAPT_RATE = 1.2;  // 1/s per line-height of error: how fast the base speed adapts (log scale)
+  const RETENTION_MARGIN = 0.85;  // lines must reach the dust zone within this fraction of their remaining retention
+  const ADAPT_MIN =0.01, ADAPT_MAX = 6;
+  const CATCH_UP = 1.5; // 1/s: extra scroll when text arrives faster than the base speed
   const FONT_FAMILY = '"Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif';
 
   const params = new URLSearchParams(location.search);
@@ -61,10 +63,14 @@
   let dpr = 1, W = 0, H = 0;
   let fontPx = 0, lineH = 0, margin = 0, maxTextW = 0, bottomSpot = 0, fontStr = '';
   let scrollV = 0;       // current scroll speed, device px/s
+  let speedAdapt = 1;    // multiplier on cfg.speed, learned every frame from where the newest line sits (see step)
   let lines = [];
   let lastWordClock = 0;  // clock time of the previous addWord
   let clock = 0;         // seconds of animation time; used for retention
-  let retentionSeconds = 30;
+  let align = 'left';    // 'left' | 'center'; set by the server's Ui:Align (not a UI setting)
+  let retentionSeconds = 60;    // set by the server's Whisper:RetentionSeconds (not a UI setting)
+  const FONT_STEPS = 8;
+  let fontSizes = makeFontSizes(38, 156);  // the selectable text sizes (px); range comes from the server's Ui:FontMinPx / FontMaxPx
   let anchorY = null;    // where the last line removed by dropTail was; the replacement line starts there, not at the bottom slot
 
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -207,7 +213,7 @@
     g.textBaseline = 'alphabetic';
     g.fillStyle = cfg.fg;
     const w = textWidth(g, line.text);
-    const x = cfg.align === 'left' ? margin : Math.round((W - w) / 2);
+    const x = align === 'left' ? margin : Math.round((W - w) / 2);
     drawRichText(g, line.text, x, Math.round(lineH / 2 + fontPx * 0.34));
     line.x0 = x;
     line.x1 = x + w;
@@ -452,7 +458,8 @@
   function debugTrace() {   // window.__trace: per frame, [id, y(css px), nWords] of each live line (no text)
     const tr = (window.__trace = window.__trace || []);
     if (tr.length > 6000) return;
-    tr.push({ t: +clock.toFixed(3), sv: +(scrollV / dpr).toFixed(1), L: lines.filter((l) => !l.dissolving)
+    tr.push({ t: +clock.toFixed(3), sv: +(scrollV / dpr).toFixed(1), ad: +speedAdapt.toFixed(3),
+      err: lastLive() ? +((lastLive().y - bottomSpot) / lineH).toFixed(2) : null, L: lines.filter((l) => !l.dissolving)
       .map((l) => [l.id || (l.id = ++lineSeq), +(l.y / dpr).toFixed(1), l.words.length]) });
   }
 
@@ -474,12 +481,29 @@
     if (!introQueue.length) revealStep(dt);
 
     const last = lastLive();
-    const target = Math.min(cfg.speed * dpr + (last ? Math.max(0, last.y - bottomSpot) * CATCH_UP : 0), MAX_SCROLL * dpr);
+    // Feedback, every frame: the newest line sitting above the bottom slot means we scroll too fast for this text
+    // size and speech rate (slow down); below it means too slow (speed up). Error is in line heights. Skipped
+    // during silence, when text legitimately stays where it is.
+    const dissolveY = H * cfg.dissolveZone;
+    // Retention floor: no line may reach the age limit before it has scrolled up into the dust zone, otherwise it
+    // would pixelate and vanish mid-screen. Use the speed each live line needs to get there in time (with margin).
+    let floorV = 0;
+    for (const l of lines) {
+      if (l.dissolving || !l.text) continue;
+      const remaining = Math.max(0.5, (retentionSeconds - (clock - l.touched)) * RETENTION_MARGIN);
+      floorV = Math.max(floorV, (l.y + lineH / 2 - dissolveY) / remaining);
+    }
+    const baseV = cfg.speed * speedAdapt * dpr;
+    // While the floor is what sets the speed, don't let the feedback keep winding the base speed down.
+    if (last && lineH > 0 && clock - lastWordClock <= GAP_SECONDS) {
+      const err = clamp((last.y - bottomSpot) / lineH, -3, 3);
+      if (err > 0 || baseV > floorV) speedAdapt = clamp(speedAdapt * Math.exp(ADAPT_RATE * err * dt), ADAPT_MIN, ADAPT_MAX);
+    }
+    const target = Math.min(Math.max(baseV + (last ? Math.max(0, last.y - bottomSpot) * CATCH_UP : 0), floorV), MAX_SCROLL * dpr);
     // Ease toward the target speed so the scroll never lurches when text is added or replaced.
     scrollV += clamp(target - scrollV, -SCROLL_DECEL * dpr * dt, SCROLL_ACCEL * dpr * dt);
     if (anchorY !== null) anchorY -= scrollV * dt;
     if (DEBUG) { debugJumps(last, dt); debugTrace(); }
-    const dissolveY = H * cfg.dissolveZone;
 
     for (const l of lines) {
       l.y -= scrollV * dt;
@@ -517,7 +541,6 @@
   const root = document.documentElement;
   const keyEls = [...menu.querySelectorAll('[data-key]')];
   const themeBtns = [...menu.querySelectorAll('[data-theme]')];
-  const alignBtns = [...menu.querySelectorAll('[data-align]')];
 
   function fmt(el, v) {
     switch (el.dataset.unit) {
@@ -527,6 +550,17 @@
       default: return v + (el.dataset.unit || '');
     }
   }
+
+  /** FONT_STEPS sizes spaced geometrically (equal perceived steps) from min to max, rounded to whole px. */
+  function makeFontSizes(min, max) {
+    return Array.from({ length: FONT_STEPS }, (_, i) => Math.round(min * Math.pow(max / min, i / (FONT_STEPS - 1))));
+  }
+  function nearestSize(px) {
+    let best = 0;
+    for (let i = 1; i < fontSizes.length; i++) if (Math.abs(fontSizes[i] - px) < Math.abs(fontSizes[best] - px)) best = i;
+    return best;
+  }
+  const fontEl = document.getElementById('font-size');
 
   function applyColors() {
     root.style.setProperty('--fg', cfg.fg);
@@ -540,8 +574,9 @@
       const out = el.parentElement.querySelector('output');
       if (out) out.textContent = fmt(el, cfg[el.dataset.key]);
     }
+    fontEl.value = nearestSize(cfg.fontPx);
+    fontEl.parentElement.querySelector('output').textContent = fontSizes[nearestSize(cfg.fontPx)] + 'px';
     for (const b of themeBtns) b.setAttribute('aria-pressed', String(b.dataset.theme === themeName));
-    for (const b of alignBtns) b.setAttribute('aria-pressed', String(b.dataset.align === cfg.align));
   }
 
   // Display settings only (never text). Every storage access is guarded: it may be blocked or empty.
@@ -562,7 +597,6 @@
         if (typeof v !== typeof DEFAULTS[key]) continue;
         if (typeof v === 'number' && !Number.isFinite(v)) continue;
         if (key === 'fg' || key === 'bg') { if (!/^#[0-9a-f]{6}$/i.test(v)) continue; }
-        if (key === 'align' && v !== 'left' && v !== 'center') continue;
         cfg[key] = v;
       }
       return saved.themeName in THEMES ? saved.themeName : 'custom';
@@ -587,7 +621,6 @@
         applyColors();
       } else {
         cfg[key] = parseFloat(el.value);
-        if (key === 'fontPx') { layout(); reflow(); }
       }
       const out = el.parentElement.querySelector('output');
       if (out) out.textContent = fmt(el, cfg[key]);
@@ -595,18 +628,18 @@
       saveSettings();
     });
   }
+  fontEl.addEventListener('input', () => {
+    cfg.fontPx = fontSizes[parseInt(fontEl.value, 10)];
+    fontEl.parentElement.querySelector('output').textContent = cfg.fontPx + 'px';
+    layout();
+    reflow();
+    saveSettings();
+  });
   for (const b of themeBtns) b.addEventListener('click', () => setTheme(b.dataset.theme));
-  for (const b of alignBtns) {
-    b.addEventListener('click', () => {
-      cfg.align = b.dataset.align;
-      for (const l of lines) l.dirty = true;
-      syncUI();
-      saveSettings();
-    });
-  }
   document.getElementById('btn-clear').addEventListener('click', () => { lines = []; held = []; introQueue = []; commitTail(); });
   document.getElementById('btn-reset').addEventListener('click', () => {
     cfg = Object.assign({}, DEFAULTS);
+    cfg.fontPx = fontSizes[nearestSize(cfg.fontPx)];
     clearSettings();
     setTheme(initialTheme());
     clearSettings();     // reset means "no saved settings", not "save the defaults"
@@ -667,6 +700,7 @@
   });
 
   const restored = params.get('light') === '1' ? null : loadSettings();
+  cfg.fontPx = fontSizes[nearestSize(cfg.fontPx)];   // a saved size from another range snaps to the nearest step
   layout();
   if (restored) {
     themeName = restored;
@@ -687,6 +721,17 @@
     /** Scrolls a fixed phrase in word by word, like speech. */
     intro(text) { introQueue = wordsOf(text || ''); introWait = 0.4; },
     setRetention(sec) { if (sec > 0) retentionSeconds = sec; },
+    /** Server's Ui:FontMinPx / FontMaxPx: the text-size slider offers FONT_STEPS sizes between them. */
+    setFontRange(min, max) {
+      if (!(min >= 8 && max > min && max <= 600)) return;
+      fontSizes = makeFontSizes(min, max);
+      cfg.fontPx = fontSizes[nearestSize(cfg.fontPx)];
+      syncUI();
+      layout();
+      reflow();
+    },
+    /** Server's Ui:Align ('left' | 'center'); anything else means left. */
+    setAlign(a) { align = a === 'center' ? 'center' : 'left'; for (const l of lines) l.dirty = true; },
     /** Wipe everything on screen (e.g. when listening stops is NOT done; text just ages out). */
     clear() { lines = []; held = []; introQueue = []; commitTail(); },
     /** The current segment is over without a final (connection dropped): stop treating its words as replaceable. */

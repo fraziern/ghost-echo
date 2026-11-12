@@ -13,7 +13,7 @@ mic and displays the transcript. Everything runs on your machine.
 - The server keeps audio only in memory while transcribing, and zeroes the buffers afterwards.
 - Logs contain status only (model loaded, session started/ended, errors) - never text or audio.
 - The page keeps text only in memory: each line is wiped when it starts to dissolve, and no line outlives
-  `retentionSeconds` after its last update. Nothing is stored in the browser except display settings
+  `RetentionSeconds` after its last update. Nothing is stored in the browser except display settings
   (colors, sizes, motion, selected microphone) in `localStorage` - never text.
 - The only outbound network call is a model download that you explicitly request.
 
@@ -35,7 +35,7 @@ listening and allow the microphone. Words appear at the bottom, scroll up, pixel
 window, and break into dust at the top. New words are revealed at a steady pace (faster when behind) and the scroll speed eases up and down, so long
 updates don't make the text lurch. While you speak, the newest words may be rewritten as the model
 refines them. Move the mouse to the **right edge** (or press **M**) for settings: microphone, model
-(a model that isn't downloaded asks before downloading), colors, text size, motion and dust tuning.
+(a model that isn't downloaded asks before downloading), colors, text size (8 steps), motion and dust tuning.
 Microphone access works on `localhost` or HTTPS only.
 
 Troubleshooting the animation: add `?debug=1` to the URL and open the browser console; it warns if the newest line
@@ -51,13 +51,22 @@ or CLI args (`dotnet run -- --Whisper:Model=small`).
 | `ModelsDir` | `models` | Where `ggml-*.bin` files live (gitignored). |
 | `Language` | `en` | Language code, or `auto` (use a non-`.en` model). |
 | `Threads` | `4` | CPU threads for whisper.cpp. |
-| `RetentionSeconds` | `30` | How long the client keeps transcript text before discarding it. |
+| `RetentionSeconds` | `60` | How long the client keeps transcript text before discarding it. Not adjustable in the page. |
 | `StepMs` | `1500` | How often partial (in-progress) text is produced while you speak. |
 | `MaxSegmentMs` | `10000` | Force a final transcript when a speech segment reaches this length. |
 | `SilenceMs` | `700` | Silence that ends a speech segment (-> final transcript). |
 | `SilenceRms` | `0.01` | Loudness (0-1) above which audio counts as speech. Raise in noisy rooms. |
 
 The URL/port is the top-level `Urls` setting.
+
+Display settings under `Ui`:
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `Align` | `left` | Text alignment, `left` or `center` (`Ui__Align=center`). Not in the page settings menu. |
+| `FontMinPx` | `38` | Smallest text size (px). The page's text-size slider has 8 steps from `FontMinPx` to `FontMaxPx`, spaced geometrically. |
+| `FontMaxPx` | `156` | Largest text size (px). |
+| `IntroPhrase` | (see file) | Phrase scrolled in when the page opens. Empty = no intro. |
 
 ### Forbidden-word filter
 Words listed in `forbidden-words.txt` (next to the exe / in the project root) are never shown: the server replaces
@@ -84,7 +93,7 @@ The page's intro phrase, shown (scrolled in word by word) every time it opens, i
 ## API
 | Endpoint | Purpose |
 |---|---|
-| `GET /api/status` | Active model, language, retention, intro phrase. `activeModel` is `null` if none loaded. |
+| `GET /api/status` | Active model, language, retention, intro phrase, alignment, text-size range. `activeModel` is `null` if none loaded. |
 | `GET /api/models` | Catalog with `installed` / `active` flags. |
 | `POST /api/models/select` | Body `{"name":"base.en","download":false}`. Switches the active model at runtime (new sessions use it; running sessions finish on the old one). `download:true` fetches it from Hugging Face first if missing - without it, a missing model returns `409`. |
 | `WS /ws` | Live transcription (below). Returns `503` if no model is loaded. |
@@ -93,7 +102,7 @@ The page's intro phrase, shown (scrolled in word by word) every time it opens, i
 - **Client -> server, binary:** raw little-endian **16-bit PCM, 16 kHz, mono** (any chunk size; ~100 ms is typical).
 - **Client -> server, text:** `{"type":"flush"}` - finalize any speech still buffered (send when stopping).
 - **Server -> client:**
-  - `{"type":"ready","model":"base.en","retentionSeconds":30,"sampleRate":16000}` - once, on connect
+  - `{"type":"ready","model":"base.en","retentionSeconds":60,"sampleRate":16000}` - once, on connect
   - `{"type":"partial","text":"...","t":7.7}` - in-progress text for the current segment (replaces the previous partial)
   - `{"type":"final","text":"...","t":11}` - segment complete
   - `t` is seconds of audio since the session began - use it (not wall-clock) for retention.

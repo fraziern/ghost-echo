@@ -15,7 +15,7 @@ public sealed class WhisperOptions
     public int Threads { get; set; } = 4;
 
     /// <summary>How many seconds of audio the client keeps text for. Sent to the client; the server keeps nothing.</summary>
-    public int RetentionSeconds { get; set; } = 30;
+    public int RetentionSeconds { get; set; } = 60;
 
     /// <summary>Interval between partial (in-progress) transcriptions while speech continues.</summary>
     public int StepMs { get; set; } = 1500;
@@ -43,6 +43,13 @@ public sealed class FilterOptions
 /// <summary>Bound from the "Ui" section of appsettings.json.</summary>
 public sealed class UiOptions
 {
+    /// <summary>Text alignment: "left" (default) or "center". Not exposed in the UI.</summary>
+    public string Align { get; set; } = "left";
+
+    /// <summary>Smallest and largest text size (px) of the page's 8-step text-size slider.</summary>
+    public int FontMinPx { get; set; } = 38;
+    public int FontMaxPx { get; set; } = 156;
+
     /// <summary>Shown (with the scrolling animation) every time the page opens. Empty = no intro.</summary>
     public string IntroPhrase { get; set; } =
         "Everything said in this room is heard once, written down for a moment, and then let go. Nothing here is saved.";

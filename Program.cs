@@ -33,7 +33,12 @@ catch (Exception ex) { app.Logger.LogError(ex, "Failed to load default model.");
 
 app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(20) });
 app.UseDefaultFiles();
-app.UseStaticFiles();
+// "no-cache" lets browsers keep a copy but forces revalidation (ETag / Last-Modified) on every load, so a rebuilt
+// or republished app.js / style.css / etc. is picked up immediately, and unchanged files cost only a 304.
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx => ctx.Context.Response.Headers.CacheControl = "no-cache",
+});
 
 // Browsers send an Origin header on cross-site requests; refuse any that isn't this server itself,
 // so a random web page can't drive the local API. Non-browser tools (curl, scripts) send no Origin.
@@ -50,6 +55,9 @@ app.MapGet("/api/status", () => new
     language = opt.Language,
     retentionSeconds = opt.RetentionSeconds,
     introPhrase = ui.IntroPhrase,
+    align = ui.Align,
+    fontMinPx = ui.FontMinPx,
+    fontMaxPx = ui.FontMaxPx,
 });
 
 app.MapGet("/api/models", () => models.List());

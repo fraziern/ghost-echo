@@ -247,6 +247,8 @@
       const st = await (await fetch('/api/status')).json();
       if (typeof st.introPhrase === 'string') intro = st.introPhrase;
       window.Display.setRetention(st.retentionSeconds);
+      window.Display.setAlign(st.align);
+      window.Display.setFontRange(st.fontMinPx, st.fontMaxPx);
       if (!st.activeModel) setStatus('No model loaded. See README to download one.', 'error');
     } catch (e) {
       setStatus('Cannot reach the server.', 'error');

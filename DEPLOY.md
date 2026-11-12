@@ -67,4 +67,5 @@ allow microphone access on `localhost` or HTTPS, so serving to other machines re
 
 ## Upgrading
 Stop the app, replace the `publish\` folder contents (keep your `models\` folder and edited
-`appsettings.json`), and start it again.
+`appsettings.json`), and start it again. Static files (`wwwroot`) are served with `Cache-Control: no-cache`,
+so browsers revalidate them on each load and pick up the new UI without a hard refresh.
